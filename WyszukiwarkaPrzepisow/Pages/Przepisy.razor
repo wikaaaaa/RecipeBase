@@ -1,0 +1,32 @@
+@page "/przepisy"
+
+<PageTitle>All recipes</PageTitle>
+
+@using WyszukiwarkaPrzepisow.Data
+@inject PrzepisService PrzepisService
+
+<h3>All recipes in our base:</h3>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Preparation</th>
+            <th>Ingredients</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var przepis in PrzepisService.GetPrzepisy().OrderBy(a => a.Name))
+        {
+            <tr>
+                <td>@przepis.Name</td>
+                <td>@przepis.Prep</td>
+                <td>@przepis.SkladnikiLista</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+

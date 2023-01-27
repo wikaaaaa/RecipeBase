@@ -1,0 +1,71 @@
+@page "/wyszukiwarka"
+
+<PageTitle>Find the right recipe!</PageTitle>
+
+@using WyszukiwarkaPrzepisow.Data
+@inject PrzepisService PrzepisService
+@inject SkladnikService SkladnikService
+@inject WyszukanieService WyszukanieService
+
+
+<h1>Find the right recipe!</h1>
+
+<p>Choose the ingredients you want and we will give you a list of recipes with those ingredients. </p>
+
+
+<EditForm Model="@createWyszukanieModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Skladniki:
+            <RadzenListBox @bind-Value=@createWyszukanieModel.WybraneSkladnikiId Multiple="true" Data="@skladniki"
+                TextProperty="@nameof(Skladnik.Name)" ValueProperty="@nameof(Skladnik.Id)" style="max-height:700px;"></RadzenListBox>
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+
+
+</EditForm>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Prep</th>
+            <th>Skladniki</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var przepis in wyniki)
+        {
+            <tr>
+                <td>@przepis.Name</td>
+                <td>@przepis.Prep</td>
+                <td>@przepis.SkladnikiLista</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+
+
+    private CreateWyszukanie createWyszukanieModel = new();
+
+    private IReadOnlyList<Przepis> wyniki = new List<Przepis>();
+
+    private void HandleValidSubmit() {
+        var wynikiId = WyszukanieService.CreateWyszukanie(createWyszukanieModel);
+        wyniki = PrzepisService.GetPrzepisyFromId(wynikiId);
+    }
+
+
+    private IEnumerable<Skladnik> skladniki = Enumerable.Empty<Skladnik>();
+
+    protected override void OnInitialized() => skladniki = SkladnikService.GetSkladniki();
+}

@@ -1,0 +1,91 @@
+@page "/newPrzepis"
+
+<PageTitle>Papers</PageTitle>
+
+@using WyszukiwarkaPrzepisow.Data
+@inject PrzepisService PrzepisService
+@inject SkladnikService SkladnikService
+
+<h1>Add a recipe</h1>
+<br>
+<h4>Specify the name of the meal, choose the ingredients, describe how to prepare it and press the sumbit button.</h4>
+<p>You can add ingredients to the list below.</p>
+<br>
+
+<EditForm Model="@createPrzepisModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Meal Name:
+            <InputText id="name" @bind-Value="createPrzepisModel.Name" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Choose ingredients:
+            <RadzenListBox @bind-Value=@createPrzepisModel.SkladnikiId 
+                Multiple="true" 
+                Data="@skladniki"
+                TextProperty="@nameof(Skladnik.Name)"
+                ValueProperty="@nameof(Skladnik.Id)"
+                style="max-height:700px;"
+            ></RadzenListBox>
+        </label>
+    </p>
+
+    <p>
+        <label>
+            How to prepare?:
+            <InputTextArea id="prep" @bind-Value="createPrzepisModel.prep" style="width:50rem" />
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+</EditForm>
+<br>
+
+
+<h2>Add ingredient:</h2>
+
+<EditForm Model="@createSkladnikModel" OnValidSubmit="@HandleValidSubmitS">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Name:
+            <InputText id="name" @bind-Value="createSkladnikModel.Name" />
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+
+</EditForm>
+
+<p>
+<b>@message</b>
+</p>
+
+@code {
+    private CreatePrzepis createPrzepisModel = new();
+
+    private IEnumerable<Skladnik> skladniki = Enumerable.Empty<Skladnik>();
+
+    private void HandleValidSubmit() => PrzepisService.CreatePrzepis(createPrzepisModel);
+
+    protected override void OnInitialized() => skladniki = SkladnikService.GetSkladniki();
+
+    private CreateSkladnik createSkladnikModel = new();
+
+    private string message = "";
+
+    private void HandleValidSubmitS() {
+        if(SkladnikService.CreateSkladnik(createSkladnikModel)) {
+            message = "Product added successfully!";
+        } else {
+            message = "Product already exists.";
+        }
+    } 
+}

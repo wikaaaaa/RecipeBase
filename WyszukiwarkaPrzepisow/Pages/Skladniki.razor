@@ -1,0 +1,61 @@
+@page "/skladniki"
+
+<PageTitle>Lista Składników</PageTitle>
+
+@using WyszukiwarkaPrzepisow.Data
+@inject SkladnikService SkladnikService
+
+<h3>All ingredients in our base:</h3>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var skladnik in SkladnikService.GetSkladniki().OrderBy(a => a.Name))
+        {
+            <tr>
+                <td>@skladnik.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Dodaj składnik:</h2>
+
+<EditForm Model="@createSkladnikModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Name:
+            <InputText id="name" @bind-Value="createSkladnikModel.Name" />
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+
+</EditForm>
+
+<p>
+<b>@message</b>
+</p>
+@code {
+    private CreateSkladnik createSkladnikModel = new();
+
+    private string message = "";
+
+    private void HandleValidSubmit() {
+        if(SkladnikService.CreateSkladnik(createSkladnikModel)) {
+            message = "Product added successfully!";
+        } else {
+            message = "Product already exists.";
+        }
+    } 
+        
+}

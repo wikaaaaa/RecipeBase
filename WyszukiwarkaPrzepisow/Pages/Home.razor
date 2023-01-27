@@ -1,0 +1,17 @@
+@page "/home"
+
+<PageTitle>Home page</PageTitle>
+
+@using WyszukiwarkaPrzepisow.Data
+@inject PrzepisService PrzepisService
+@inject SkladnikService SkladnikService
+
+<h1>Welcome to our recipe base!</h1>
+<br>
+<h4>Here You can: </h4>
+<ul>
+  <li>find recipes with specified ingredients,</li>
+  <li>scroll through recipes to find a new meal to cook,</li>
+  <li>Add your recipes to the base, so that others can try it out!</li>
+</ul>
+
